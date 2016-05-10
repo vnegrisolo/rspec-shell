@@ -6,8 +6,8 @@ require 'rspec/shell/mock_expectation'
 module Rspec
   module Shell
 
-    def mock(*mocks)
-      Environment.new(*mocks)
+    def shell
+      @shell ||= Environment.new
     end
   end
 end

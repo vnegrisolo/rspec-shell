@@ -1,11 +1,15 @@
 require 'spec_helper'
 
-describe Rspec::Shell do
+RSpec.describe Rspec::Shell do
   it 'has a version number' do
-    expect(Rspec::Shell::VERSION).not_to be nil
+    expect(described_class::VERSION).not_to be nil
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  describe '#shell' do
+    let(:test_class) { Class.new { include Rspec::Shell }.new }
+
+    it 'instantiate an Environment for shell' do
+      expect(test_class.shell).to be_a(described_class::Environment)
+    end
   end
 end

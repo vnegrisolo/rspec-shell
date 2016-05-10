@@ -1,14 +1,14 @@
 module Rspec
   module Shell
     class Environment
-      def initialize(*mocks)
-        @mocks = mocks.map { |mock| [mock, Mock.new(mock)] }.to_h
+      def initialize
+        @mocks = {}
         @variables = {}
         @answers = []
       end
 
       def allow(mock)
-        @mocks[mock]
+        @mocks[mock] || @mocks[mock] = Mock.new(mock)
       end
 
       def export(variable, value)
