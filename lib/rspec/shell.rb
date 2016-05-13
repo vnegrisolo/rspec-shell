@@ -9,5 +9,9 @@ module Rspec
     def shell
       @shell ||= Environment.new
     end
+
+    def self.included(base)
+      base.after { is_expected.to_not include('Should Be Mocked') }
+    end
   end
 end

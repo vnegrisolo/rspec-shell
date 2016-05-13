@@ -6,7 +6,7 @@ RSpec.describe Rspec::Shell do
   end
 
   describe '#shell' do
-    let(:test_class) { Class.new { include Rspec::Shell }.new }
+    let(:test_class) { Class.new(RSpec::Core::ExampleGroup) { include Rspec::Shell }.new }
 
     it 'instantiate an Shell Environment' do
       expect(test_class.shell).to be_a(Rspec::Shell::Environment)
