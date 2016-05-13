@@ -4,7 +4,7 @@ module Rspec
       def initialize
         @mocks = {}
         @variables = {}
-        @answers = []
+        @inputs = []
       end
 
       def allow(mock)
@@ -15,8 +15,8 @@ module Rspec
         @variables[variable] = value
       end
 
-      def type(*answers)
-        @answers += answers
+      def type(*inputs)
+        @inputs += inputs
       end
 
       def run(command, params = '')
@@ -24,7 +24,7 @@ module Rspec
           @variables.map { |k, v| "export #{k}='#{v}'" },
           @mocks.values.map(&:to_shell),
           ". #{command}.sh",
-          "#{command} #{params} <<< $'#{join(@answers)}'",
+          "#{command} #{params} <<< $'#{join(@inputs)}'",
           "printenv"
         )
 
