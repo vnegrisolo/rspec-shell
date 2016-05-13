@@ -5,7 +5,6 @@ module Rspec
 
       def initialize(params)
         @params = params
-        @output = ''
       end
 
       def and_return(output)

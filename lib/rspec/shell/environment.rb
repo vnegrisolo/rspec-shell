@@ -26,18 +26,27 @@ module Rspec
         @inputs += inputs
       end
 
-      def run(command)
-        full_command = [
+      def to_shell(command)
+        [
           variables.map { |k, v| "export #{k}='#{v}'" },
           mocks.values.map(&:to_shell),
           files.map { |file| ". #{file}" },
-          "#{command} <<< $'",
-          inputs,
-          "'",
+          "#{command}#{inputs_to_shell}",
           "printenv"
         ].flatten.compact.join("\n")
+      end
 
-        `#{full_command}`
+      def run(command)
+        `#{to_shell(command)}`
+      end
+
+      private
+
+      def inputs_to_shell
+        return if @inputs.empty?
+
+        inputs = @inputs.join("\n")
+        " <<< $'#{inputs}'"
       end
     end
   end

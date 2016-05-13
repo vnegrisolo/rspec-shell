@@ -29,17 +29,17 @@ module Rspec
       private
 
       def default_expactation_to_shell
-        "if [ $#{@shell_control} -eq 0 ]; then #{print(@output)}; fi"
+        "if [ $#{@shell_control} -eq 0 ]; then #{print(@output)} fi"
       end
 
       def expectations_to_shell
         @expectations.map do |e|
-          "if [ \"$*\" = \"#{e.params}\" ]; then #{@shell_control}=1; #{print(e.output)}; fi"
+          "if [ \"$*\" = \"#{e.params}\" ]; then #{@shell_control}=1; #{print(e.output)} fi"
         end
       end
 
       def print(output)
-        "echo \"#{output.gsub(/"/, '\"')}\""
+        output && "echo \"#{output.gsub(/"/, '\"')}\";"
       end
 
       def join(*args)

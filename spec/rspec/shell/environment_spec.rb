@@ -31,4 +31,55 @@ RSpec.describe Rspec::Shell::Environment do
       expect(environment.inputs).to eq(%w(yes no))
     end
   end
+
+  describe '#to_shell' do
+    subject { environment.to_shell('pair') }
+
+    it 'calls the command and prints the final environment variables' do
+      is_expected.to include('pair')
+      is_expected.to include('printenv')
+    end
+
+    context 'with files to load' do
+      before { environment.load('pair.sh') }
+
+      it 'loads the files' do
+        is_expected.to include('. pair.sh')
+      end
+    end
+
+    context 'with mock git' do
+      before { environment.allow(:git).with('commit --amend') }
+
+      it 'calls the command' do
+        is_expected.to include('git() {')
+        is_expected.to include('if [ "$*" = "commit --amend" ]; then git_ok=1;  fi')
+      end
+    end
+
+    context 'with mock curl and return something' do
+      before { environment.allow(:curl).with('url').and_return('response') }
+
+      it 'calls the command' do
+        is_expected.to include('curl() {')
+        is_expected.to include('if [ "$*" = "url" ]; then curl_ok=1; echo "response"; fi')
+      end
+    end
+
+    context 'with variables to export' do
+      before { environment.export('KEY', 'user-key') }
+
+      it 'exports variables' do
+        is_expected.to include("export KEY='user-key'")
+      end
+    end
+
+    context 'with user inputs' do
+      before { environment.type('yes') }
+
+      it 'adds user inputs' do
+        is_expected.to include("pair <<< $'yes'")
+      end
+    end
+  end
 end
