@@ -2,13 +2,18 @@ module Rspec
   module Shell
     class Environment
       def initialize
+        @files = []
         @mocks = {}
         @variables = {}
         @inputs = []
       end
 
+      def load(*files)
+        @files += files
+      end
+
       def allow(mock)
-        @mocks[mock] || @mocks[mock] = Mock.new(mock)
+        @mocks[mock] ||= Mock.new(mock)
       end
 
       def export(variable, value)
@@ -20,21 +25,18 @@ module Rspec
       end
 
       def run(command, params = '')
-        full_command = join(
+        full_command = [
           @variables.map { |k, v| "export #{k}='#{v}'" },
           @mocks.values.map(&:to_shell),
-          ". #{command}.sh",
-          "#{command} #{params} <<< $'#{join(@inputs)}'",
+          @files.map { |file| ". #{file}" },
+          "#{command} #{params} <<< $'",
+          @inputs,
+          "'",
           "printenv"
-        )
+        ].flatten.compact.join("\n")
 
         `#{full_command}`
-      end
-
-      def join(*args)
-        args.flatten.compact.join("\n")
       end
     end
   end
 end
-
