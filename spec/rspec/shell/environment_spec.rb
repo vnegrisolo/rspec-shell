@@ -11,9 +11,9 @@ RSpec.describe Rspec::Shell::Environment do
     end
   end
 
-  describe '#allow' do
+  describe '#expect' do
     it 'instantiates a Shell Mock' do
-      environment.allow(:git)
+      environment.expect(:git)
       expect(environment.mocks[:git]).to be_a(Rspec::Shell::Mock)
     end
   end
@@ -49,7 +49,7 @@ RSpec.describe Rspec::Shell::Environment do
     end
 
     context 'with mock git' do
-      before { environment.allow(:git).with('commit --amend') }
+      before { environment.expect(:git).with('commit --amend') }
 
       it 'calls the command' do
         is_expected.to include('git() {')
@@ -58,7 +58,7 @@ RSpec.describe Rspec::Shell::Environment do
     end
 
     context 'with mock curl and return something' do
-      before { environment.allow(:curl).with('url').and_return('response') }
+      before { environment.expect(:curl).with('url').and_return('response') }
 
       it 'calls the command' do
         is_expected.to include('curl() {')

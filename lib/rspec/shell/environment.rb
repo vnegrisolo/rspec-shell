@@ -14,7 +14,7 @@ module Rspec
         @files += files
       end
 
-      def allow(mock)
+      def expect(mock)
         @mocks[mock] ||= Mock.new(mock)
       end
 
