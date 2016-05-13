@@ -1,6 +1,8 @@
 module Rspec
   module Shell
     class Environment
+      attr_reader :files, :mocks, :variables, :inputs
+
       def initialize
         @files = []
         @mocks = {}
@@ -24,13 +26,13 @@ module Rspec
         @inputs += inputs
       end
 
-      def run(command, params = '')
+      def run(command)
         full_command = [
-          @variables.map { |k, v| "export #{k}='#{v}'" },
-          @mocks.values.map(&:to_shell),
-          @files.map { |file| ". #{file}" },
-          "#{command} #{params} <<< $'",
-          @inputs,
+          variables.map { |k, v| "export #{k}='#{v}'" },
+          mocks.values.map(&:to_shell),
+          files.map { |file| ". #{file}" },
+          "#{command} <<< $'",
+          inputs,
           "'",
           "printenv"
         ].flatten.compact.join("\n")
